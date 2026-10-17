@@ -373,7 +373,7 @@ export default function Hue() {
                 </div>
                 {/* card */}
                 <div className="mt-4 rounded-xl p-4 sm:p-5" style={{ backgroundColor: c.surface.hex, border: `1px solid ${hairline(c.surface.hex)}` }}>
-                  <Editable value={eyebrowText} set={setEyebrowText} color={c.accent.hex} size="11px" weight={600} placeholder="Eyebrow" extra={{ textTransform: "uppercase", letterSpacing: "0.06em" }} />
+                  <Editable value={eyebrowText} set={setEyebrowText} color={c.accent.hex} size="11px" weight={600} placeholder="Eyebrow" mode="full" extra={{ textTransform: "uppercase", letterSpacing: "0.06em" }} />
                   <div className="mt-1">
                     <Editable value={headlineText} set={setHeadlineText} color={c.textPrimary.hex} size="22px" weight={700} placeholder="Type your headline…" mode="full" />
                   </div>
