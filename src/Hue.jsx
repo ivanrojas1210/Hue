@@ -393,7 +393,8 @@ export default function Hue() {
             </div>
 
             {/* ---------- SWATCHES (compact, editable) ---------- */}
-            <div className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <h3 className="mt-8 text-sm font-semibold">Color roles</h3>
+<div className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
               {ROLE_ORDER.map(([key, role]) => {
                 const item = c[key];
                 const fg = readableOn(item.hex);
@@ -440,7 +441,9 @@ export default function Hue() {
               <div className="mt-3 overflow-hidden rounded-xl" style={{ border: `1px solid ${BRAND.line}` }}>
                 {pairsFor(c).map((p, i) => {
                   const ratio = contrast(p.fg, p.bg);
-                  const words = (p.kind === "button" ? btn1Text : headlineText).trim() || "Sample";
+               const texts = [brandText, navText, headlineText, btn1Text, btn2Text];
+const w = (texts[i] || "").trim().split(/\s+/).filter(Boolean);
+const words = w.length ? w.slice(0, 2).join(" ") + (w.length > 2 ? "…" : "") : "Aa";
                   return (
                     <div key={p.label} className="flex items-center gap-3 px-3 py-2.5 sm:gap-4" style={{ backgroundColor: BRAND.surface, borderTop: i === 0 ? "none" : `1px solid ${BRAND.line}` }}>
                       <div className="grid h-11 min-w-[92px] max-w-[92px] place-items-center overflow-hidden px-2 text-center" style={{ backgroundColor: p.bg, border: `1px solid ${BRAND.line}`, borderRadius: 8 }}>
