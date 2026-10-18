@@ -160,6 +160,7 @@ export default function Hue() {
   const [editRole, setEditRole] = useState(null);
   const [editBackup, setEditBackup] = useState(null);
   const copyTimer = useRef(null);
+  const nameRef = useRef(null);
 
   /* every text field in the preview is editable + persists across generations */
   const [brandText, setBrandText] = useState("Your Brand");
@@ -244,6 +245,16 @@ export default function Hue() {
   function doneEdit() {
     setEditRole(null);
     setEditBackup(null);
+  }
+
+  function renameWorking(name) {
+    setWorking((w) => (w ? { ...w, name } : w));
+    if (working && saved.some((s) => s.id === working.id)) {
+      persist(saved.map((s) => (s.id === working.id ? { ...s, name } : s)));
+    }
+  }
+  function renameSaved(id, name) {
+    persist(saved.map((s) => (s.id === id ? { ...s, name } : s)));
   }
 
   function saveWorking() {
@@ -334,7 +345,22 @@ export default function Hue() {
           <div className="mt-8">
             {/* header: name + Reset + Save (Generate lives in the input box above) */}
             <div className="mb-5 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold tracking-tight">{working.name}</h2>
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <input
+                  value={working.name}
+                  ref={nameRef}
+                  onChange={(e) => renameWorking(e.target.value)}
+                  placeholder="Name this palette"
+                  spellCheck={false}
+                  title="Click to rename"
+                  aria-label="Palette name"
+                  className="min-w-0 flex-1 rounded-md border border-transparent bg-transparent px-1.5 py-1 -ml-1.5 text-lg font-semibold tracking-tight outline-none hover:border-[#C4CBD6] focus:border-[#065F46] focus:bg-white"
+                  style={{ color: BRAND.navy }}
+                />
+                <button onClick={() => { nameRef.current?.focus(); nameRef.current?.select(); }} className="shrink-0 rounded px-1.5 py-1 text-xs" style={{ color: BRAND.muted }} title="Rename this palette">
+                  ✎ Rename
+                </button>
+              </div>
               <div className="flex items-center gap-2">
                 {edited && (
                   <button onClick={resetOriginal} className="rounded-lg px-3 py-2 text-sm font-medium" style={{ backgroundColor: BRAND.bg, color: BRAND.navy, border: `1px solid ${BRAND.line}` }} title="Undo all color changes">
@@ -441,9 +467,9 @@ export default function Hue() {
               <div className="mt-3 overflow-hidden rounded-xl" style={{ border: `1px solid ${BRAND.line}` }}>
                 {pairsFor(c).map((p, i) => {
                   const ratio = contrast(p.fg, p.bg);
-               const texts = [brandText, navText, headlineText, btn1Text, btn2Text];
-const w = (texts[i] || "").trim().split(/\s+/).filter(Boolean);
-const words = w.length ? w.slice(0, 2).join(" ") + (w.length > 2 ? "…" : "") : "Aa";
+                  const texts = [brandText, navText, headlineText, btn1Text, btn2Text];
+                  const w = (texts[i] || "").trim().split(/\s+/).filter(Boolean);
+                  const words = w.length ? w.slice(0, 2).join(" ") + (w.length > 2 ? "…" : "") : "Aa";
                   return (
                     <div key={p.label} className="flex items-center gap-3 px-3 py-2.5 sm:gap-4" style={{ backgroundColor: BRAND.surface, borderTop: i === 0 ? "none" : `1px solid ${BRAND.line}` }}>
                       <div className="grid h-11 min-w-[92px] max-w-[92px] place-items-center overflow-hidden px-2 text-center" style={{ backgroundColor: p.bg, border: `1px solid ${BRAND.line}`, borderRadius: 8 }}>
@@ -475,7 +501,16 @@ const words = w.length ? w.slice(0, 2).join(" ") + (w.length > 2 ? "…" : "") :
                 return (
                   <div key={s.id} className="rounded-xl p-3" style={{ backgroundColor: BRAND.surface, border: `1px solid ${BRAND.line}` }}>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="truncate text-[13px] font-medium">{s.name}</span>
+                      <input
+                        value={s.name}
+                        onChange={(e) => renameSaved(s.id, e.target.value)}
+                        placeholder="Untitled"
+                        spellCheck={false}
+                        title="Click to rename"
+                        aria-label="Saved palette name"
+                        className="min-w-0 flex-1 truncate rounded border border-transparent bg-transparent px-1 py-0.5 -ml-1 text-[13px] font-medium outline-none hover:border-[#C4CBD6] focus:border-[#065F46]"
+                        style={{ color: BRAND.navy }}
+                      />
                       <div className="flex shrink-0 items-center gap-1">
                         <button onClick={() => loadSaved(s)} className="rounded px-2 py-1 text-[11px]" style={{ color: BRAND.green, border: `1px solid ${BRAND.line}` }}>Load</button>
                         <button onClick={() => removeSaved(s.id)} className="rounded px-2 py-1 text-[11px]" style={{ color: BRAND.muted, border: `1px solid ${BRAND.line}` }} title="Remove">✕</button>
